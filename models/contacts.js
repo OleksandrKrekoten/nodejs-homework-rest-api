@@ -1,6 +1,6 @@
 const { Contact } = require("../utils/validation/mongooseSchema");
 
-const listContacts = async () => {
+const getAllContacts = async () => {
   const db = await Contact.find({});
   return db;
 };
@@ -28,7 +28,7 @@ const updateStatusContact = async (contactId, body) => {
 };
 
 module.exports = {
-  listContacts,
+  getAllContacts,
   getContactById,
   removeContact,
   addContact,

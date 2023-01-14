@@ -1,5 +1,5 @@
 const {
-  listContacts,
+  getAllContacts,
   getContactById,
   removeContact,
   addContact,
@@ -9,7 +9,7 @@ const {
 const { HttpError } = require("../utils/httpError/contacts");
 
 const getContacts = async (req, res, next) => {
-  const contact = await listContacts();
+  const contact = await getAllContacts();
   res.status(200).json({
     status: "success",
     code: 200,
@@ -76,7 +76,7 @@ const updateStatus = async (req, res, next)=>{
    if (!contact) {
      return next(HttpError(400, "Not found"));
   }
-  updateStatusContact(contactId, body);
+ await updateStatusContact(contactId, body);
   return res.status(200).json({
     status: "success",
     code: 200,
