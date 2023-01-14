@@ -5,6 +5,7 @@ const {
   createContact,
   deleteContact,
   changeContact,
+  updateStatus,
 } = require("../../controllers/contacts.controller");
 const { validateBody } = require("../../middlewares");
 const { addContactSchema } = require("../../utils/validation/contacts");
@@ -27,5 +28,7 @@ router.put(
   validateBody(addContactSchema),
   changeContact
 );
+router.patch("/api/contacts/:contactId/favorite", updateStatus);
+
 
 module.exports = router;
