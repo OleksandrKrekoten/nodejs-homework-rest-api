@@ -1,7 +1,11 @@
 const mongoose = require("mongoose");
-// const { isEmail, isMobilePhone } = require("validator");
-const schema = mongoose.Schema(
+const { Schema } = require("mongoose");
+const schema = Schema(
   {
+    userId: {
+      type: String,
+      required: true,
+    },
     name: {
       type: String,
       required: [true, "field is required"],
@@ -11,19 +15,17 @@ const schema = mongoose.Schema(
     email: {
       type: String,
       required: [true, "Email address is required"],
-      
     },
     phone: {
       type: Number,
       required: [true, "field is required"],
-     
     },
     favorite: {
       type: Boolean,
       default: false,
     },
   },
-  { versionKey: false, timeStamps: true }
+  { versionKey: false, timestamps: true }
 );
 const Contact = mongoose.model("contacts", schema);
 module.exports = {

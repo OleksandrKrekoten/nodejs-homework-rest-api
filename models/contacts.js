@@ -1,30 +1,37 @@
-const { Contact } = require("../utils/validation/mongooseSchema");
+const { Contact } = require("../schema/contactsMongooseSchema");
 
-const getAllContacts = async () => {
-  const db = await Contact.find({});
+const getAllContacts = async (userId) => {
+  const db = await Contact.find({ userId });
+
   return db;
 };
 
-const getContactById = async (contactId) => {
-  const updatedDb = Contact.findById(contactId);
+const getContactById = async (contactId, userId) => {
+  const updatedDb = Contact.findOne({ _id: contactId, userId });
   return updatedDb;
 };
 
-const removeContact = async (contactId) => {
-  await Contact.findByIdAndRemove(contactId);
+const removeContact = async (contactId, userId) => {
+  await Contact.findOneAndRemove(contactId, userId);
 };
 
-const addContact = async (body) => {
+const addContact = async (body, userId) => {
   const { name, email, phone } = body;
-  const contact = await Contact.create({ name, email, phone });
+  const contact = await Contact.create({ name, email, phone, userId });
   return contact;
 };
 
-const updateContact = async (contactId, body) => {
-  await Contact.updateOne({ _id: { $eq: contactId } }, { ...body });
+const updateContact = async (contactId, body, userId) => {
+  await Contact.findOneAndUpdate(
+    { _id: contactId, userId },
+    { $set: { ...body } }
+  );
 };
-const updateStatusContact = async (contactId, body) => {
-  await Contact.updateOne({ _id: { $eq: contactId } }, { ...body });
+const updateStatusContact = async (contactId, body, userId) => {
+  await Contact.findOneAndUpdate(
+    { _id: contactId, userId },
+    { $set: { ...body } }
+  );
 };
 
 module.exports = {
