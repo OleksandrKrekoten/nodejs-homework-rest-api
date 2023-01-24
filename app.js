@@ -3,6 +3,9 @@ const logger = require("morgan");
 const cors = require("cors");
 
 const contactsRouter = require("./routes/api/contacts.js");
+const authRouter = require("./routes/api/auth.js");
+
+
 
 const app = express();
 
@@ -14,14 +17,39 @@ app.use(express.json());
 
 app.use("/", contactsRouter);
 app.use("/api/contacts", contactsRouter);
-app.use("/api/contacts/:contactId", contactsRouter);
+app.use("/api/auth", authRouter);
+
 
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" });
 });
 
-app.use((err, req, res, next) => {
-  res.status(500).json({ message: err.message });
+app.use((error, req, res, next) => {
+  console.error("Handling errors: ", error.message, error.name);
+
+
+  if (error.name === "ValidationError") {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+
+
+  if (error.message.includes("Cast to ObjectId failed for value")) {
+    return res.status(400).json({
+      message: "id is invalid",
+    });
+  }
+
+  if (error.status) {
+    return res.status(error.status).json({
+      message: error.message,
+    });
+  }
+
+  return res.status(500).json({
+    message: "Internal server error",
+  });
 });
 
 module.exports = app;

@@ -9,7 +9,8 @@ const {
 const { HttpError } = require("../utils/httpError/contacts");
 
 const getContacts = async (req, res, next) => {
-  const contact = await getAllContacts();
+  const { _id } = req.user;
+  const contact = await getAllContacts(_id);
   res.status(200).json({
     status: "success",
     code: 200,
@@ -19,7 +20,8 @@ const getContacts = async (req, res, next) => {
 
 const getContact = async (req, res, next) => {
   const { contactId } = req.params;
-  const contact = await getContactById(contactId);
+  const { _id: userId } = req.user;
+  const contact = await getContactById(contactId, userId);
   if (!contact) {
     return next(HttpError(404, "Not found"));
   }
@@ -32,8 +34,8 @@ const getContact = async (req, res, next) => {
 
 const createContact = async (req, res, next) => {
   const { name, email, phone } = req.body;
-
-  await addContact({ name, email, phone });
+  const userId = req.user._id;
+  await addContact({ name, email, phone }, userId);
 
   res.status(201).json({
     status: "success",
@@ -43,7 +45,8 @@ const createContact = async (req, res, next) => {
 
 const deleteContact = async (req, res, next) => {
   const { contactId } = req.params;
-  const contact = await getContactById(contactId);
+  const { _id: userId } = req.user;
+  const contact = await getContactById(contactId, userId);
   if (!contact) {
     return next(HttpError(404, "Not found"));
   }
@@ -56,32 +59,37 @@ const deleteContact = async (req, res, next) => {
 };
 
 const changeContact = async (req, res, next) => {
+  console.log("changeContact");
   const { contactId } = req.params;
+  const { _id: userId } = req.user;
   const body = req.body;
-  const contact = await getContactById(contactId);
+  const contact = await getContactById(contactId, userId);
   if (!contact) {
     return next(HttpError(404, "Not found"));
   }
 
-  updateContact(contactId, body);
+  updateContact(contactId, body, userId);
   return res.status(200).json({
     status: "success",
     code: 200,
   });
 };
-const updateStatus = async (req, res, next)=>{
+
+const updateStatus = async (req, res, next) => {
   const { contactId } = req.params;
+  const { _id: userId } = req.user;
   const body = req.body;
-  const contact = await getContactById(contactId);
-   if (!contact) {
-     return next(HttpError(400, "Not found"));
+  const contact = await getContactById(contactId, userId);
+  if (!contact) {
+    return next(HttpError(400, "Contact not found"));
   }
- await updateStatusContact(contactId, body);
+  await updateStatusContact(contactId, body, userId);
+  console.log("updateStatusContact");
   return res.status(200).json({
     status: "success",
     code: 200,
   });
-}
+};
 module.exports = {
   getContacts,
   getContact,
