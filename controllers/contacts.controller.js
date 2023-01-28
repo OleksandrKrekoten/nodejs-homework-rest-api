@@ -6,7 +6,7 @@ const {
   updateContact,
   updateStatusContact,
 } = require("../models/contacts");
-const { HttpError } = require("../utils/httpError/contacts");
+const createError = require("http-errors");
 
 const getContacts = async (req, res, next) => {
   const { _id } = req.user;
@@ -23,7 +23,7 @@ const getContact = async (req, res, next) => {
   const { _id: userId } = req.user;
   const contact = await getContactById(contactId, userId);
   if (!contact) {
-    return next(HttpError(404, "Not found"));
+    return next(createError(404, "Not found"));
   }
   return res.status(200).json({
     status: "success",
@@ -48,7 +48,7 @@ const deleteContact = async (req, res, next) => {
   const { _id: userId } = req.user;
   const contact = await getContactById(contactId, userId);
   if (!contact) {
-    return next(HttpError(404, "Not found"));
+    return next(createError(404, "Not found"));
   }
   await removeContact(contactId);
   return res.status(200).json({
@@ -65,7 +65,7 @@ const changeContact = async (req, res, next) => {
   const body = req.body;
   const contact = await getContactById(contactId, userId);
   if (!contact) {
-    return next(HttpError(404, "Not found"));
+    return next(createError(404, "Not found"));
   }
 
   updateContact(contactId, body, userId);
@@ -81,7 +81,7 @@ const updateStatus = async (req, res, next) => {
   const body = req.body;
   const contact = await getContactById(contactId, userId);
   if (!contact) {
-    return next(HttpError(400, "Contact not found"));
+    return next(createError(400, "Contact not found"));
   }
   await updateStatusContact(contactId, body, userId);
   console.log("updateStatusContact");
