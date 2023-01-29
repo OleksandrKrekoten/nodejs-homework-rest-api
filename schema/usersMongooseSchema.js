@@ -23,6 +23,9 @@ const schema = mongoose.Schema(
       enum: ["starter", "pro", "business"],
       default: "starter",
     },
+    avatar: {
+      type: String,
+    },
   },
   { versionKey: false, timestamps: true }
 );
