@@ -3,6 +3,8 @@ const {
   register,
   login,
   uploadImage,
+  verifyEmail,
+  reconfirmEmail,
 } = require("../../controllers/auth.controller");
 const { auth, upload } = require("../../middlewares");
 const { tryCatchWrapper } = require("../../utils/tryCatchWrapper");
@@ -14,5 +16,10 @@ authRouter.patch(
   upload.single("image"),
   tryCatchWrapper(auth),
   uploadImage
+);
+authRouter.post("/verify", reconfirmEmail );
+authRouter.get(
+  "/verify/:verificationToken",
+  tryCatchWrapper(verifyEmail)
 );
 module.exports = authRouter;
